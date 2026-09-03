@@ -1,0 +1,15 @@
+aws:
+  region: eu-central-1
+
+ec2:
+  instances:
+    - i-05b33c97627091ae9
+
+s3:
+  buckets:
+    - my-test-bucket
+
+ecr:
+  repositories:
+    - my-application
+

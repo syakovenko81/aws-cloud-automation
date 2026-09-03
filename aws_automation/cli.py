@@ -16,6 +16,7 @@ from aws_automation.services.s3 import S3Service
 from aws_automation.utils.logging import configure_logging
 from aws_automation.utils.validation import (
     validate_bucket_name,
+    validate_ec2_state,
     validate_instance_id,
     validate_region,
     validate_repository_name,
@@ -116,6 +117,10 @@ def _build_ec2_parser(service_parsers: argparse._SubParsersAction) -> None:
         action="append",
         help="EC2 instance ID to include. Repeat the option to include multiple instances.",
     )
+    ec2_list.add_argument(
+        "--state",
+        help="Filter instances by state, for example running or stopped.",
+    )
 
     ec2_start = ec2_commands.add_parser("start", help="Start EC2 instances.")
     ec2_start.add_argument(
@@ -167,7 +172,8 @@ def _handle_ec2(args: argparse.Namespace, context: RuntimeContext) -> int:
         session = create_session(profile=context.profile, region=context.region)
         service = EC2Service(create_client(session, "ec2"))
         instance_ids = _resolve_instance_ids(args.instance_ids, context.config, required=False)
-        rows = service.list_instances(instance_ids=instance_ids)
+        state = validate_ec2_state(args.state) if args.state else None
+        rows = service.list_instances(instance_ids=instance_ids, state=state)
         _print_table(["Instance ID", "State", "Type"], rows, empty_message="No EC2 instances found.")
         return 0
 

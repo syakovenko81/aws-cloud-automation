@@ -10,6 +10,14 @@ REGION_PATTERN = re.compile(r"^[a-z]{2}(?:-[a-z]+)+-\d$")
 INSTANCE_ID_PATTERN = re.compile(r"^i-(?:[0-9a-f]{8}|[0-9a-f]{17})$")
 BUCKET_PATTERN = re.compile(r"^(?![.-])[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$")
 REPOSITORY_PATTERN = re.compile(r"^[a-z0-9]+(?:(?:[._/-])[a-z0-9]+)*$")
+EC2_INSTANCE_STATES = {
+    "pending",
+    "running",
+    "shutting-down",
+    "terminated",
+    "stopping",
+    "stopped",
+}
 
 
 def validate_region(region: str) -> str:
@@ -54,10 +62,20 @@ def validate_repository_name(repository_name: str) -> str:
     return repository_name
 
 
+def validate_ec2_state(state: str) -> str:
+    """Validate an EC2 instance state filter."""
+
+    if state not in EC2_INSTANCE_STATES:
+        allowed_states = ", ".join(sorted(EC2_INSTANCE_STATES))
+        raise ValidationError(
+            f"Invalid EC2 state '{state}'. Allowed values: {allowed_states}."
+        )
+    return state
+
+
 def validate_non_empty_list(values: list[str], label: str) -> list[str]:
     """Validate a non-empty list of string values."""
 
     if not values:
         raise ValidationError(f"{label} must not be empty.")
     return values
-

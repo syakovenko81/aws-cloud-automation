@@ -146,6 +146,7 @@ EC2:
 
 ```bash
 python -m aws_automation ec2 list
+python -m aws_automation ec2 list --state running
 python -m aws_automation ec2 list --instance-id i-0123456789abcdef0
 python -m aws_automation ec2 start --instance-id i-0123456789abcdef0
 python -m aws_automation ec2 restart --instance-id i-0123456789abcdef0

@@ -16,13 +16,19 @@ class EC2Service:
     def __init__(self, client) -> None:
         self.client = client
 
-    def list_instances(self, instance_ids: Iterable[str] | None = None) -> list[dict[str, str]]:
+    def list_instances(
+        self,
+        instance_ids: Iterable[str] | None = None,
+        state: str | None = None,
+    ) -> list[dict[str, str]]:
         """List EC2 instances."""
 
         params: dict[str, Any] = {}
         normalized_ids = list(instance_ids or [])
         if normalized_ids:
             params["InstanceIds"] = normalized_ids
+        if state:
+            params["Filters"] = [{"Name": "instance-state-name", "Values": [state]}]
 
         try:
             paginator = self.client.get_paginator("describe_instances")

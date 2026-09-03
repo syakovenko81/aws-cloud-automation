@@ -125,6 +125,14 @@ def _build_ec2_parser(service_parsers: argparse._SubParsersAction) -> None:
         help="EC2 instance ID to start. Repeat the option to start multiple instances.",
     )
 
+    ec2_restart = ec2_commands.add_parser("restart", help="Restart EC2 instances.")
+    ec2_restart.add_argument(
+        "--instance-id",
+        dest="instance_ids",
+        action="append",
+        help="EC2 instance ID to restart. Repeat the option to restart multiple instances.",
+    )
+
     ec2_stop = ec2_commands.add_parser("stop", help="Stop EC2 instances.")
     ec2_stop.add_argument(
         "--instance-id",
@@ -178,6 +186,23 @@ def _handle_ec2(args: argparse.Namespace, context: RuntimeContext) -> int:
             ["Instance ID", "Previous State", "Current State"],
             rows,
             empty_message="No EC2 instances were started.",
+        )
+        return 0
+
+    if args.command == "restart":
+        if context.dry_run:
+            for instance_id in instance_ids:
+                print(f"DRY RUN: EC2 instance {instance_id} would be restarted.")
+            print("No changes were made.")
+            return 0
+
+        session = create_session(profile=context.profile, region=context.region)
+        service = EC2Service(create_client(session, "ec2"))
+        rows = service.restart_instances(instance_ids)
+        _print_table(
+            ["Instance ID", "Action"],
+            rows,
+            empty_message="No EC2 instances were restarted.",
         )
         return 0
 

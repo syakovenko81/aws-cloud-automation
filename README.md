@@ -52,7 +52,7 @@ The goal is to demonstrate clean Python structure, configuration management, inp
 - `cli.py`: builds the argparse CLI, resolves configuration overrides, dispatches commands, and formats human-readable output
 - `config.py`: loads YAML configuration, validates structure and values, and returns typed configuration objects
 - `aws_session.py`: creates Boto3 sessions and clients, and translates botocore exceptions into user-friendly application errors
-- `services/ec2.py`: EC2 list, start, and stop operations
+- `services/ec2.py`: EC2 list, start, restart, and stop operations
 - `services/s3.py`: S3 bucket and object listing operations
 - `services/ecr.py`: ECR repository and image listing operations
 - `utils/validation.py`: reusable validation for regions, instance IDs, bucket names, and repository names
@@ -127,7 +127,7 @@ ecr:
 Rules:
 
 - `aws.region` is optional and can be overridden by `--region`
-- `ec2.instances` can be used as default targets for `ec2 list`, `ec2 start`, and `ec2 stop`
+- `ec2.instances` can be used as default targets for `ec2 list`, `ec2 start`, `ec2 restart`, and `ec2 stop`
 - `s3.buckets` and `ecr.repositories` can provide default targets when exactly one value is configured
 - credentials are intentionally not supported in the configuration file
 
@@ -148,6 +148,7 @@ EC2:
 python -m aws_automation ec2 list
 python -m aws_automation ec2 list --instance-id i-0123456789abcdef0
 python -m aws_automation ec2 start --instance-id i-0123456789abcdef0
+python -m aws_automation ec2 restart --instance-id i-0123456789abcdef0
 python -m aws_automation ec2 stop --instance-id i-0123456789abcdef0
 ```
 

@@ -66,6 +66,22 @@ class EC2Service:
             for change in response.get("StartingInstances", [])
         ]
 
+    def restart_instances(self, instance_ids: list[str], dry_run: bool = False) -> list[dict[str, str]]:
+        """Restart one or more EC2 instances."""
+
+        if dry_run:
+            return [
+                {"Instance ID": instance_id, "Action": "would be restarted"}
+                for instance_id in instance_ids
+            ]
+
+        try:
+            self.client.reboot_instances(InstanceIds=instance_ids)
+        except (ClientError, BotoCoreError) as exc:
+            raise translate_boto_error(exc) from exc
+
+        return [{"Instance ID": instance_id, "Action": "restart requested"} for instance_id in instance_ids]
+
     def stop_instances(self, instance_ids: list[str], dry_run: bool = False) -> list[dict[str, str]]:
         """Stop one or more EC2 instances."""
 
@@ -85,4 +101,3 @@ class EC2Service:
             }
             for change in response.get("StoppingInstances", [])
         ]
-

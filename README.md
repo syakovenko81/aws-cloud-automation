@@ -13,6 +13,7 @@ The goal is to demonstrate clean Python structure, configuration management, inp
 - Clear user-facing error handling
 - Global `--dry-run` support for mutating EC2 commands
 - Modular service classes with injectable AWS clients for future pytest-based tests
+- Flat package layout without a `src/` directory to keep the exercise simple
 
 ## Project structure
 
@@ -20,29 +21,26 @@ The goal is to demonstrate clean Python structure, configuration management, inp
 .
 ├── .gitignore
 ├── README.md
+├── aws_automation
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── aws_session.py
+│   ├── cli.py
+│   ├── config.py
+│   ├── exceptions.py
+│   ├── services
+│   │   ├── __init__.py
+│   │   ├── ec2.py
+│   │   ├── ecr.py
+│   │   └── s3.py
+│   └── utils
+│       ├── __init__.py
+│       ├── logging.py
+│       └── validation.py
 ├── config
 │   └── example.yaml
 ├── pyproject.toml
 ├── requirements.txt
-├── src
-│   └── aws_automation
-│       ├── __init__.py
-│       ├── __main__.py
-│       ├── aws_session.py
-│       ├── cli.py
-│       ├── config.py
-│       ├── exceptions.py
-│       ├── services
-│       │   ├── __init__.py
-│       │   ├── ec2.py
-│       │   ├── ecr.py
-│       │   └── s3.py
-│       └── utils
-│           ├── __init__.py
-│           ├── logging.py
-│           └── validation.py
-└── tests
-    └── __init__.py
 ```
 
 ## Architecture
@@ -112,8 +110,7 @@ aws:
 
 ec2:
   instances:
-    - i-0123456789abcdef0
-    - i-0123456789abcdef1
+    - i-05b33c97627091ae9
 
 s3:
   buckets:
@@ -215,4 +212,4 @@ Expected user input errors are handled without showing Python tracebacks.
 - Reuse `create_session()` and `create_client()` instead of duplicating Boto3 setup
 - Reuse validators instead of embedding regex checks in command handlers
 - Service classes are designed for future pytest tests with mocked clients
-- The `tests/` directory is intentionally minimal for now because the exercise focuses on implementation structure first
+- A dedicated `tests/` directory has not been added yet; the code is structured so pytest tests can be introduced later without refactoring the service interfaces

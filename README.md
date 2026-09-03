@@ -209,7 +209,7 @@ Expected user input errors are handled without showing Python tracebacks.
 ## Development notes
 
 - Keep AWS interactions inside the service modules
-- Reuse `create_session()` and `create_client()` instead of duplicating Boto3 setup
-- Reuse validators instead of embedding regex checks in command handlers
-- Service classes are designed for future pytest tests with mocked clients
-- A dedicated `tests/` directory has not been added yet; the code is structured so pytest tests can be introduced later without refactoring the service interfaces
+- Reuse `create_session()` and `create_client()` from `aws_session.py` instead of duplicating Boto3 setup
+- Reuse validators from `utils/validation.py` instead of embedding checks in command handlers
+- The package uses a flat layout (`aws_automation/` at the repository root) to keep the exercise simple
+- No automated pytest suite has been added yet, but service classes accept injected clients so AWS calls can be mocked later

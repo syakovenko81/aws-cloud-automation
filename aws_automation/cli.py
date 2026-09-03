@@ -15,6 +15,7 @@ from aws_automation.services.ecr import ECRService
 from aws_automation.services.s3 import S3Service
 from aws_automation.utils.logging import configure_logging
 from aws_automation.utils.validation import (
+    EC2_INSTANCE_STATES,
     validate_bucket_name,
     validate_ec2_state,
     validate_instance_id,
@@ -119,7 +120,8 @@ def _build_ec2_parser(service_parsers: argparse._SubParsersAction) -> None:
     )
     ec2_list.add_argument(
         "--state",
-        help="Filter instances by state, for example running or stopped.",
+        choices=sorted(EC2_INSTANCE_STATES),
+        help="Filter instances by EC2 state.",
     )
 
     ec2_start = ec2_commands.add_parser("start", help="Start EC2 instances.")
